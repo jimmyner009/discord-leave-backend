@@ -1,15 +1,27 @@
+// index.js
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
+require('dotenv').config(); // ใช้ .env สำหรับ config
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-const DISCORD_WEBHOOK = 'https://discord.com/api/webhooks/1400131418742460522/n-rF4jBdTSWmCO--16DfaeRzg69gzRXke15N265G5gzL6UkDuKeENWhsGlY08NP_qAa0';
+const PORT = process.env.PORT || 3001;
+const DISCORD_WEBHOOK = process.env.DISCORD_WEBHOOK;
+
+if (!DISCORD_WEBHOOK) {
+  console.error("❌ ไม่พบ DISCORD_WEBHOOK ใน .env");
+  process.exit(1);
+}
 
 app.post('/submit-form', async (req, res) => {
   const { name, date, reason } = req.body;
+
+  if (!name || !date || !reason) {
+    return res.status(400).json({ error: 'ข้อมูลไม่ครบ' });
+  }
 
   const message = {
     content: `📢 **แจ้งลาแก๊ง**\n👤 ชื่อ: ${name}\n📅 วันที่ลา: ${date}\n📝 เหตุผล: ${reason}`
@@ -25,6 +37,10 @@ app.post('/submit-form', async (req, res) => {
   }
 });
 
-app.listen(3001, () => {
-  console.log('✅ Backend started at http://localhost:3001');
+app.get('/', (req, res) => {
+  res.send("😎 ฟอร์มลาแก๊ง backend พร้อมใช้งาน");
+});
+
+app.listen(PORT, () => {
+  console.log(`✅ Backend started at http://localhost:${PORT}`);
 });
