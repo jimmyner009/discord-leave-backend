@@ -2,7 +2,7 @@
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
-require('dotenv').config(); // ใช้ .env สำหรับ config
+require('dotenv').config();
 
 const app = express();
 app.use(cors());
@@ -23,8 +23,36 @@ app.post('/submit-form', async (req, res) => {
     return res.status(400).json({ error: 'ข้อมูลไม่ครบ' });
   }
 
+  // Embed ตกแต่ง
   const message = {
-    content: `📢 **แจ้งลาแก๊ง**\n👤 ชื่อ: ${name}\n📅 วันที่ลา: ${date}\n📝 เหตุผล: ${reason}`
+    username: "📋 แจ้งลาแก๊ง",
+    embeds: [
+      {
+        color: 0x5865F2, // สีม่วง indigo
+        title: "📢 มีคนแจ้งลาแล้ว!",
+        fields: [
+          {
+            name: "👤 ชื่อ",
+            value: name,
+            inline: false
+          },
+          {
+            name: "📅 วันที่ลา",
+            value: date,
+            inline: false
+          },
+          {
+            name: "📝 เหตุผล",
+            value: reason,
+            inline: false
+          }
+        ],
+        footer: {
+          text: "ระบบฟอร์มลาแก๊ง ✨",
+        },
+        timestamp: new Date()
+      }
+    ]
   };
 
   try {
